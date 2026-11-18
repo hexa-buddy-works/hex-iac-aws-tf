@@ -7,6 +7,9 @@ module "dev_vpc" {
     "environment" = "dev"
     "name"        = "welldyne-vpc-dev"
   }
+  providers                = {
+    aws                    = aws.home
+  }
 }
 
 module "qa_vpc" {
@@ -17,5 +20,8 @@ module "qa_vpc" {
   prov_tags                = {
     "environment" = "qa"
     "name"        = "welldyne-vpc-qa"
+  }
+  providers                = {
+    aws                    = aws.home
   }
 }

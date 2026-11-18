@@ -7,6 +7,3 @@ resource "aws_vpc" "wd_vpc" {
   region                                  = var.wd_region[var.prov_region]
   tags                                    = var.prov_tags
 }
-
-
-
