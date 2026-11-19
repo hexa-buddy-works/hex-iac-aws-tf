@@ -62,14 +62,14 @@ variable "tags" {
 variable "availability_zone" {
   description = "AZ name (e.g. us-east-1a). Use this or availability_zone_id, not both."
   type        = string
-  default     = false
+  default     = null
 }
 
 
 variable "customer_owned_ipv4_pool" {
   description = "Customer-owned IPv4 pool (Outposts only)."
   type        = string
-  default     = false
+  default     = null
 }
 
 variable "enable_dns64" {
@@ -81,7 +81,7 @@ variable "enable_dns64" {
 variable "enable_lni_at_device_index" {
   description = "Device index for a local network interface (Outposts/Local Zones)."
   type        = number
-  default     = false
+  default     = null
 }
 
 variable "enable_resource_name_dns_a_record_on_launch" {
@@ -93,13 +93,13 @@ variable "enable_resource_name_dns_a_record_on_launch" {
 variable "ipv4_ipam_pool_id" {
   description = "IPAM pool ID. Use instead of cidr_block."
   type        = string
-  default     = false
+  default     = null
 }
 
 variable "ipv4_netmask_length" {
   description = "Netmask length requested from the IPAM pool."
   type        = number
-  default     = false
+  default     = null
 }
 
 variable "map_customer_owned_ip_on_launch" {
@@ -111,5 +111,5 @@ variable "map_customer_owned_ip_on_launch" {
 variable "private_dns_hostname_type_on_launch" {
   description = "Hostname type for instances: ip-name or resource-name."
   type        = string
-  default     = false
+  default     = null
 }
