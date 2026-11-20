@@ -17,7 +17,6 @@ variable "prov_region" {
   }
 }
 
-
 variable "subnet_type" {
   description = "This is a map of the subnet types."
   type        = map(string)
@@ -36,7 +35,6 @@ variable "prov_subnet_type" {
     error_message = "Subnet type must be public or private."
   }
 }
-
 
 variable "vpc_id" {
   description = "ID of the VPC the subnet belongs to."
@@ -64,3 +62,41 @@ variable "enable_dns64" {
   type        = bool
   default     = false
 }
+
+variable subnet_count {
+  description = "Number of subnets to create."
+  type        = number
+  default     = 1
+}
+
+variable vpc_cidr_block {
+  description = "The CIDR block for the VPC."
+  type        = string
+}
+
+variable "subnet_newbits" {
+  description = "The number of new bits to use for subnetting."
+  type        = number
+  default     = 12
+}
+
+variable "subnet_newbits_list" {
+  description = "A list of new bits to use for subnetting."
+  type        = list(number)
+  default     = [12]
+  validation {
+    condition = (
+      #var.subnet_newbits_list == null ||
+      length(var.subnet_newbits_list) <= var.subnet_count
+    )
+    error_message = "subnet_newbits_list cannot exceed subnet_count entries."
+  }
+}
+
+locals {
+  effective_subnet_count = min(
+    var.subnet_count,
+    length(data.aws_availability_zones.available.names)
+  )
+}
+
