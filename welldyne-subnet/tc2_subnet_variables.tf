@@ -17,59 +17,44 @@ variable "prov_region" {
   }
 }
 
-
-variable "subnet_types" {
-  description = "Map of subnet types and their settings."
-  type = map(object({
-    cidr_block              = string
-    map_public_ip_on_launch = bool
-  }))
-  default = {
-    public_subnet = {
-      cidr_block              = "10.0.1.0/24"
-      map_public_ip_on_launch = true
-    }
-    private_subnet = {
-      cidr_block              = "10.0.2.0/24"
-      map_public_ip_on_launch = false
-    }
-  }
-}
-
 variable "subnet_type" {
-  description = "Which subnet type to create (selector)."
-  type        = string
-  default     = "private_subnet"
-  validation {
-    condition     = contains(["public_subnet", "private_subnet"], var.subnet_type)
-    error_message = "subnet_type must be public_subnet or private_subnet."
+  description = "This is a map of the subnet types."
+  type        = map(string)
+  default     = {
+    public  = true
+    private = false
   }
 }
 
+variable "prov_subnet_type" {
+  description = "Selector for subnet type."
+  type        = string
+  default     = "private"
+  validation {
+    condition     = contains(["public", "private"], var.prov_subnet_type)
+    error_message = "Subnet type must be public or private."
+  }
+}
 
 variable "vpc_id" {
   description = "ID of the VPC the subnet belongs to."
   type        = string
 }
 
-variable "tags" {
-  description = "A map of tags to assign to the subnet."
+variable "prov_tags" {
+  description = "A map of tags to assign to the resource."
   type        = map(string)
 }
 
-
+variable "cidr_block" {
+  description = "The CIDR block for the subnet."
+  type        = string
+}
 
 variable "availability_zone" {
   description = "AZ name (e.g. us-east-1a). Use this or availability_zone_id, not both."
   type        = string
-  default     = null
-}
-
-
-variable "customer_owned_ipv4_pool" {
-  description = "Customer-owned IPv4 pool (Outposts only)."
-  type        = string
-  default     = null
+  default     = "us-east-1a"
 }
 
 variable "enable_dns64" {
@@ -78,38 +63,40 @@ variable "enable_dns64" {
   default     = false
 }
 
-variable "enable_lni_at_device_index" {
-  description = "Device index for a local network interface (Outposts/Local Zones)."
+variable subnet_count {
+  description = "Number of subnets to create."
   type        = number
-  default     = null
+  default     = 1
 }
 
-variable "enable_resource_name_dns_a_record_on_launch" {
-  description = "Whether to create a DNS A record for the resource name on launch."
-  type        = bool
-  default     = false
-}
-
-variable "ipv4_ipam_pool_id" {
-  description = "IPAM pool ID. Use instead of cidr_block."
+variable vpc_cidr_block {
+  description = "The CIDR block for the VPC."
   type        = string
-  default     = null
 }
 
-variable "ipv4_netmask_length" {
-  description = "Netmask length requested from the IPAM pool."
+variable "subnet_newbits" {
+  description = "The number of new bits to use for subnetting."
   type        = number
-  default     = null
+  default     = 12
 }
 
-variable "map_customer_owned_ip_on_launch" {
-  description = "Assign customer-owned IPs on launch (Outposts only)."
-  type        = bool
-  default     = false
+variable "subnet_newbits_list" {
+  description = "A list of new bits to use for subnetting."
+  type        = list(number)
+  default     = [12]
+  validation {
+    condition = (
+      #var.subnet_newbits_list == null ||
+      length(var.subnet_newbits_list) <= var.subnet_count
+    )
+    error_message = "subnet_newbits_list cannot exceed subnet_count entries."
+  }
 }
 
-variable "private_dns_hostname_type_on_launch" {
-  description = "Hostname type for instances: ip-name or resource-name."
-  type        = string
-  default     = null
+locals {
+  effective_subnet_count = min(
+    var.subnet_count,
+    length(data.aws_availability_zones.available.names)
+  )
 }
+
