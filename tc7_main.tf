@@ -69,7 +69,7 @@ module "qa_subnet" {
    prov_region              = "home_region"
    vpc_id                   = module.dev_vpc.vpc_id
    nlb_name                 = "welldyne-nlb-dev"
-   nlb_subnet_ids           = module.dev_subnet.nlb_subnet_ids
+   nlb_subnet_ids           = module.dev_subnet.subnet_id
    prov_tags                = {
     "environment" = "dev"
     "name"        = "welldyne-nlb-dev"
@@ -85,7 +85,7 @@ module "qa_subnet" {
    prov_region              = "home_region"
    vpc_id                   = module.qa_vpc.vpc_id
    nlb_name                 = "welldyne-nlb-qa"
-   nlb_subnet_ids           = module.qa_subnet.subnet_ids
+   nlb_subnet_ids           = module.qa_subnet.subnet_id
    prov_tags                ={
     "environemt" = "qa"
     "name" ="welldyne-nlb-qa"
@@ -100,7 +100,7 @@ module "qa_subnet" {
   prov_region              = "home_region"
   vpc_id                   = module.dev_vpc.vpc_id
   gwlb_name                = "welldyne-gwlb-dev"
-  gwlb_subnet_ids          = module.dev_subnet.subnet_ids
+  gwlb_subnet_ids          = module.dev_subnet.subnet_id
   prov_tags                = {
     "environment" = "dev"
     "name"        = "welldyne-gwlb-dev"
@@ -115,7 +115,7 @@ module "qa_subnet" {
   prov_region              = "home_region"
   vpc_id                   = module.qa_vpc.vpc_id
   gwlb_name                = "welldyne-gwlb-qa"
-  gwlb_subnet_ids          = module.qa_subnet.subnet_ids
+  gwlb_subnet_ids          = module.qa_subnet.subnet_id
   prov_tags                = {
     "environment" = "qa"
     "name"        = "welldyne-gwlb-qa"
@@ -130,7 +130,7 @@ module "qa_subnet" {
   prov_region              = "home_region"
   vpc_id                   = module.dev_vpc.vpc_id
   gwlb_service_name        = module.dev_gwlb.gwlb_endpoint_service_name
-  gwlbe_subnet_ids         = module.dev_subnet.subnet_ids
+  gwlbe_subnet_ids         = module.dev_subnet.subnet_id
   prov_tags                = {
     "environemt"  =  "dev"
     "name"        =  "welldyne-gwlbe-dev"
@@ -145,7 +145,7 @@ module "qa_subnet" {
   prov_region              = "home_region"
   vpc_id                   = module.qa_vpc.vpc_id
   gwlb_service_name        = module.qa_gwlb.gwlb_endpoint_service_name
-  gwlbe_subnet_ids         = module.qa_subnet.subnet_ids
+  gwlbe_subnet_ids         = module.qa_subnet.subnet_id
   prov_tags                = {
     "environemt"  =  "qa"
     "name"        =  "welldyne-gwlbe-qa"
