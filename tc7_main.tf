@@ -154,3 +154,43 @@ module "qa_subnet" {
     aws = aws.home
   }
  }
+
+ module "dev_route_table"  {
+  source                   = "./welldyne-routetable"
+  prov_region              = "home_region"
+  vpc_id                   = module.dev_vpc.vpc_id
+  subnet_ids               = module.dev_subnet.subnet_id
+  routes = {
+    to_gwlbe = {
+      destination_cidr_block = "0.0.0.0/0"
+      vpc_endpoint_id        = module.dev_gwlbe.gwlbe_id
+    }
+  }
+  prov tags = {
+    "environmet" = "dev"
+    "name"       = "welldyne-rt-dev"
+  }
+  providers = {
+    aws = aws.home
+  }
+ }
+
+ module "qa_route_table"  {
+  source                   = "./welldyne-routetable"
+  prov_region              = "home_region"
+  vpc_id                   = module.qa_vpc.vpc_id
+  subnet_ids               = module.qa_subnet.subnet_id
+  routes = {
+    to_gwlbe = {
+      destination_cidr_block = "0.0.0.0/0"
+      vpc_endpoint_id        = module.qa_gwlbe.gwlbe_id
+    }
+  }
+  prov tags = {
+    "environmet" = "qa"
+    "name"       = "welldyne-rt-qa"
+  }
+  providers = {
+    aws = aws.home
+  }
+ }
