@@ -166,7 +166,7 @@ module "qa_subnet" {
       vpc_endpoint_id        = module.dev_gwlbe.gwlbe_id
     }
   }
-  prov tags = {
+  prov_tags = {
     "environmet" = "dev"
     "name"       = "welldyne-rt-dev"
   }
@@ -186,7 +186,7 @@ module "qa_subnet" {
       vpc_endpoint_id        = module.qa_gwlbe.gwlbe_id
     }
   }
-  prov tags = {
+  prov_tags = {
     "environmet" = "qa"
     "name"       = "welldyne-rt-qa"
   }
