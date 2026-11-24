@@ -30,7 +30,6 @@ variable "prov_tags" {
 variable "subnet_ids" {
   description = "Subnet IDs to associate with this route table."
   type        = list(string)
-  default     = []
 }
  
 variable "routes" {
