@@ -100,3 +100,21 @@ locals {
   )
 }
 
+variable "availability_zone_ids" {
+  description = "AZ ID (e.g. use1-az1). Use this or availability_zone, not both."
+  type        = list(string)
+  default     = null
+}
+
+variable "same_az_subnets" {
+  description = "Whether to create subnets in the same availability zone."
+  type        = bool
+  default     = false
+}
+
+variable "cidr_blocks" {
+  description = "List of CIDR blocks for the subnets."
+  type        = list(string)
+  default     = null
+  
+}
