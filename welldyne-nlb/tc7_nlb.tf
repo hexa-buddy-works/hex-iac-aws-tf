@@ -2,7 +2,7 @@ resource "aws_lb" "wd_nlb" {
   count                            = var.nlb_count
   name                             = var.nlbs[count.index].name
   region                           = var.wd_region[var.prov_region]
-  load_balancer_type               = var.nlbs[count.index].load_balancer_type
+  load_balancer_type               = var.nlb_load_balancer_type
   internal                         = var.nlbs[count.index].nlb_internal
   ip_address_type                  = var.nlb_ip_address_type
   enable_cross_zone_load_balancing = var.nlb_enable_cross_zone_load_balancing

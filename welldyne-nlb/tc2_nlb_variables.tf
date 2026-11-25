@@ -4,11 +4,20 @@ variable "nlb_count" {
   default     = 1
 }
 
+variable "nlb_load_balancer_type" {
+  description = "Type of load balancer: application or network."
+  type        = string
+  default     = "network"
+  validation {
+    condition     = contains(["application", "network"], var.nlb_load_balancer_type)
+    error_message = "nlb_load_balancer_type must be application or network."
+  }
+}
+
 variable "nlbs" {
   description = "List of names for the NLBs."
   type        = list(object({
     name = string
-    load_balancer_type = string
     nlb_internal = bool
     subnet_mappings = list(object({
       subnet_id = string

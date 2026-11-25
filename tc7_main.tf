@@ -221,8 +221,7 @@ module "welldyne-dev-nlb" {
   nlbs                     = [
     {
       name                  = "welldyne-nlb-dev"
-      load_balancer_type    = "network"
-      nlb_internal          = false
+      nlb_internal          = true
       subnet_mappings       = [
         {
           subnet_id          = module.dev_subnet.subnet_id[0]
@@ -237,15 +236,29 @@ module "welldyne-dev-nlb" {
   ]
   nlb_target_groups        = [
     {
-      name                  = "welldyne-nlb-tg-dev"
+      name                  = "welldyne-nlb-tg-web-1"
       port                  = 80
       protocol              = "TCP"
       target_type           = "ip"
       weight                = 50
     },
     {
-      name                  = "welldyne-nlb-tg-dev-2"
+      name                  = "welldyne-nlb-tg-web-2"
       port                  = 80
+      protocol              = "TCP"
+      target_type           = "ip"
+      weight                = 50
+    },
+    {
+      name                  = "welldyne-nlb-tg-TLS-1"
+      port                  = 443
+      protocol              = "TCP"
+      target_type           = "ip"
+      weight                = 50
+    },
+    {
+      name                  = "welldyne-nlb-tg-TLS-2"
+      port                  = 443
       protocol              = "TCP"
       target_type           = "ip"
       weight                = 50
