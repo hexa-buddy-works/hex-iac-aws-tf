@@ -64,37 +64,6 @@ module "qa_subnet" {
   subnet_newbits           = 10
 }
 
-
- module "dev_nlb" {
-   source                   = "./welldyne-nlb"
-   prov_region              = "home_region"
-   vpc_id                   = module.dev_vpc.vpc_id
-   nlb_name                 = "welldyne-nlb-dev"
-   nlb_subnet_ids           = module.dev_subnet.subnet_id
-   prov_tags                = {
-    "environment" = "dev"
-    "name"        = "welldyne-nlb-dev"
-   }
-   providers ={
-    aws=aws.home
-   }  
- }
-
- module "qa_nlb" {
-   source                   = "./welldyne-nlb"
-   prov_region              = "home_region"
-   vpc_id                   = module.qa_vpc.vpc_id
-   nlb_name                 = "welldyne-nlb-qa"
-   nlb_subnet_ids           = module.qa_subnet.subnet_id
-   prov_tags                ={
-    "environemt" = "qa"
-    "name" ="welldyne-nlb-qa"
-   }
-   providers = {
-    aws=aws.home
-   }
- }
-
  module "dev_gwlb" {
   source                   = "./welldyne-gwlb"
   prov_region              = "home_region"
@@ -242,4 +211,52 @@ module "scp_apply" {
   providers                = {
     aws                    = aws.home
   }
+}
+
+module "welldyne-dev-nlb" {
+  source                   = "./welldyne-nlb"
+  prov_region              = "home_region"
+  vpc_id                   = module.dev_vpc.vpc_id
+  nlb_count                = 1
+  nlbs                     = [
+    {
+      name                  = "welldyne-nlb-dev"
+      load_balancer_type    = "network"
+      nlb_internal          = false
+      subnet_mappings       = [
+        {
+          subnet_id          = module.dev_subnet.subnet_id[0]
+          private_ipv4_address = "10.0.1.10"
+        },
+        {
+          subnet_id          = module.dev_subnet.subnet_id[1]
+          private_ipv4_address = "10.0.2.10"
+        }
+      ]
+    }
+  ]
+  nlb_target_groups        = [
+    {
+      name                  = "welldyne-nlb-tg-dev"
+      port                  = 80
+      protocol              = "TCP"
+      target_type           = "ip"
+      weight                = 50
+    },
+    {
+      name                  = "welldyne-nlb-tg-dev-2"
+      port                  = 80
+      protocol              = "TCP"
+      target_type           = "ip"
+      weight                = 50
+    }
+  ]
+  prov_tags                = {
+    "environment"          = "dev"
+    "name"                 = "welldyne-nlb-dev"
+  }
+  providers                = {
+    aws                    = aws.home
+  }
+  
 }

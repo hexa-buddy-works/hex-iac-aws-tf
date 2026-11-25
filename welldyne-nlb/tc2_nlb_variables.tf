@@ -1,3 +1,28 @@
+variable "nlb_count" {
+  description = "Number of NLBs to create."
+  type        = number
+  default     = 1
+}
+
+variable "nlbs" {
+  description = "List of names for the NLBs."
+  type        = list(object({
+    name = string
+    load_balancer_type = string
+    nlb_internal = bool
+    subnet_mappings = list(object({
+      subnet_id = string
+      allocation_id = optional(string)
+      private_ipv4_address = optional(string)
+    }))
+  }))
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC (from: terraform output vpc_id in welldyne-vpc)."
+  type        = string
+}
+
 variable "wd_region" {
   type = map(string)
   default = {
@@ -17,38 +42,6 @@ variable "prov_region" {
   }
 }
 
-variable "vpc_id" {
-  description = "ID of the VPC (from: terraform output vpc_id in welldyne-vpc)."
-  type        = string
-}
-
-variable "prov_tags" {
-  description = "A map of tags to assign to the resources. Must include a name key."
-  type        = map(string)
-}
-
-variable "enable_deletion_protection" {
-  description = "Whether deletion protection is enabled on the load balancer."
-  type        = bool
-  default     = false
-}
-
-variable "nlb_name" {
-  description = "Name of the NLB (letters, numbers and hyphens only, max 29 characters so the target group name fits)."
-  type        = string
-}
-
-variable "nlb_internal" {
-  description = "true = internal NLB (private subnets), false = internet-facing (public subnets)."
-  type        = bool
-  default     = true
-}
-
-variable "nlb_subnet_ids" {
-  description = "Subnet IDs for the NLB, one per Availability Zone."
-  type        = list(string)
-}
-
 variable "nlb_ip_address_type" {
   description = "IP address type of the NLB: ipv4 or dualstack."
   type        = string
@@ -62,28 +55,27 @@ variable "nlb_ip_address_type" {
 variable "nlb_enable_cross_zone_load_balancing" {
   description = "Whether the NLB spreads traffic across targets in all AZs."
   type        = bool
+  default     = true
+}
+
+variable "enable_deletion_protection" {
+  description = "Whether deletion protection is enabled on the load balancer."
+  type        = bool
   default     = false
 }
 
-variable "nlb_listener_port" {
-  description = "Port the NLB listens on."
-  type        = number
-  default     = 80
+variable "prov_tags" {
+  description = "A map of tags to assign to the resources. Must include a name key."
+  type        = map(string)
 }
 
-variable "nlb_target_port" {
-  description = "Port on the targets that receives traffic."
-  type        = number
-  default     = 80
+variable "nlb_target_groups" {
+  description = "List of target groups for NLB"
+  type = list(object({
+    name        = string
+    weight      = number
+    target_type = string
+    protocol    = string
+    port        = number
+  }))
 }
-
-variable "nlb_target_type" {
-  description = "Target type for the target group: instance or ip."
-  type        = string
-  default     = "instance"
-  validation {
-    condition     = contains(["instance", "ip"], var.nlb_target_type)
-    error_message = "nlb_target_type must be instance or ip."
-  }
-}
-
