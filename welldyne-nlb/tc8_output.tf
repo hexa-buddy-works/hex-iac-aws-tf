@@ -1,29 +1,31 @@
 output "nlb_arns" {
-  description = "ARNs of the Network Load Balancers."
-  value       = aws_lb.wd_nlb[*].arn
+  description = "Network Load Balancer ARNs"
+  value = {
+    for name, nlb in aws_lb.wd_nlb :
+    name => nlb.arn
+  }
 }
 
 output "nlb_names" {
-  description = "Names of the Network Load Balancers."
-  value       = aws_lb.wd_nlb[*].name
+  description = "Network Load Balancer Name"
+  value = {
+    for name, nlb in aws_lb.wd_nlb :
+    name => nlb.name
+  }
 }
 
-output "nlb_cross_zone_status" {
-  description = "Cross-zone load balancing status of the Network Load Balancers."
-  value       = aws_lb.wd_nlb[*].enable_cross_zone_load_balancing
+output "nlb_target_groups_arn" {
+  description = "Network Load Balancer Target Groups ARNs"
+  value = {
+    for name, tg in aws_lb_target_group.wd_nlb_tg :
+    name => tg.arn
+  }
 }
 
-output "nlb_regions" {
-  description = "Regions of the Network Load Balancers."
-  value       = aws_lb.wd_nlb[*].region
-}
-
-output "nlb_target_group_arns" {
-  description = "Register your servers in this target group."
-  value       = aws_lb_target_group.wd_nlb_tg[*].arn
-}
-
-output "nlb_subnet_mappings" {
-  description = "Subnet mappings of the Network Load Balancers."
-  value       = aws_lb.wd_nlb[*].subnet_mapping
+output "nlb_listener_arn" {
+  description = "Network Load Balancer Listener ARNs"
+  value = {
+    for name, listener in aws_lb_listener.wd_nlb_listener :
+    name => listener.arn
+  }
 }

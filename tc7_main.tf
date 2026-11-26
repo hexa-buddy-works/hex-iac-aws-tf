@@ -1,26 +1,72 @@
 module "dev_vpc" {
-  source           = "./welldyne-vpc"
-  prov_region      = "home_region"
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "default"
-  prov_tags = {
-    "environment" = "dev"
-    "name"        = "welldyne-vpc-dev"
-  }
+  source      = "./welldyne-vpc"
+  prov_region = "home_region"
+  vpc_count   = 2
+
+  vpcs = [
+    {
+      cidr_block                           = "10.0.0.0/16"
+      instance_tenancy                     = "default"
+      enable_dns_support                   = false
+      enable_dns_hostnames                 = false
+      enable_network_address_usage_metrics = false
+
+      prov_tags = {
+        environment = "dev"
+        name        = "welldyne-vpc-dev-1"
+      }
+    },
+    {
+      cidr_block                           = "10.1.0.0/16"
+      instance_tenancy                     = "default"
+      enable_dns_support                   = false
+      enable_dns_hostnames                 = false
+      enable_network_address_usage_metrics = false
+
+      prov_tags = {
+        environment = "dev"
+        name        = "welldyne-vpc-dev-2"
+      }
+    }
+  ]
+
   providers = {
     aws = aws.home
   }
 }
 
 module "qa_vpc" {
-  source           = "./welldyne-vpc"
-  prov_region      = "home_region"
-  cidr_block       = "10.0.0.0/16"
-  instance_tenancy = "default"
-  prov_tags = {
-    "environment" = "qa"
-    "name"        = "welldyne-vpc-qa"
-  }
+  source      = "./welldyne-vpc"
+  prov_region = "home_region"
+  vpc_count   = 2
+
+  vpcs = [
+    {
+      cidr_block                           = "10.2.0.0/16"
+      instance_tenancy                     = "default"
+      enable_dns_support                   = false
+      enable_dns_hostnames                 = false
+      enable_network_address_usage_metrics = false
+
+      prov_tags = {
+        environment = "qa"
+        name        = "welldyne-vpc-qa-1"
+      }
+    },
+    {
+      cidr_block                           = "10.3.0.0/16"
+      instance_tenancy                     = "default"
+      enable_dns_support                   = false
+      enable_dns_hostnames                 = false
+      enable_network_address_usage_metrics = false
+
+      prov_tags = {
+        environment = "qa"
+        name        = "welldyne-vpc-qa-2"
+      }
+    }
+  ]
+
   providers = {
     aws = aws.home
   }
@@ -30,7 +76,7 @@ module "dev_subnet" {
   source           = "./welldyne-subnet"
   prov_subnet_type = "private"
   prov_region      = "home_region"
-  vpc_id           = module.dev_vpc.vpc_id
+  vpc_id           = module.dev_vpc.vpc_id[0]
   cidr_block       = "10.0.1.0/24"
   prov_tags = {
     "environment" = "dev"
@@ -41,7 +87,7 @@ module "dev_subnet" {
     aws = aws.home
   }
   subnet_count        = 2
-  vpc_cidr_block      = module.dev_vpc.vpc_cidr_block
+  vpc_cidr_block      = module.dev_vpc.vpc_cidr_block[0]
   subnet_newbits_list = [11, 12]
 }
 
@@ -49,7 +95,7 @@ module "qa_subnet" {
   source           = "./welldyne-subnet"
   prov_subnet_type = "private"
   prov_region      = "home_region"
-  vpc_id           = module.qa_vpc.vpc_id
+  vpc_id           = module.qa_vpc.vpc_id[0]
   cidr_block       = "10.0.1.0/24"
   prov_tags = {
     "environment" = "qa"
@@ -60,46 +106,36 @@ module "qa_subnet" {
     aws = aws.home
   }
   subnet_count   = 2
-  vpc_cidr_block = module.qa_vpc.vpc_cidr_block
+  vpc_cidr_block = module.qa_vpc.vpc_cidr_block[0]
   subnet_newbits = 10
 }
 
 
-
 /*
 module "dev_gwlb" {
-  source      = "./welldyne-gwlb"
-  prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id
-
-  gwlb_count = 1
-
-  gwlbs = [
-    {
-      name = "welldyne-gwlb-dev"
-
-      subnet_mappings = [
-        {
-          subnet_id = module.dev_subnet.subnet_id[0]
-        },
-        {
-          subnet_id = module.dev_subnet.subnet_id[1]
-        }
-      ]
-    }
-  ]
-
-  gwlb_target_groups = [
-    {
-      name              = "welldyne-gwlb-dev-tg"
-      target_type       = "instance"
-      health_check_port = 80
-    }
-  ]
-
+  source          = "./welldyne-gwlb"
+  prov_region     = "home_region"
+  vpc_id          = module.dev_vpc.vpc_id[0]
+  gwlb_name       = "welldyne-gwlb-dev"
+  gwlb_subnet_ids = module.dev_subnet.subnet_id
   prov_tags = {
-    environment = "dev"
-    name        = "welldyne-gwlb-dev"
+    "environment" = "dev"
+    "name"        = "welldyne-gwlb-dev"
+  }
+  providers = {
+    aws = aws.home
+  }
+}
+
+module "qa_gwlb" {
+  source          = "./welldyne-gwlb"
+  prov_region     = "home_region"
+  vpc_id          = module.qa_vpc.vpc_id[0]
+  gwlb_name       = "welldyne-gwlb-qa"
+  gwlb_subnet_ids = module.qa_subnet.subnet_id
+  prov_tags = {
+    "environment" = "qa"
+    "name"        = "welldyne-gwlb-qa"
   }
 
   providers = {
@@ -149,10 +185,11 @@ module "qa_gwlb" {
 */
 
 
+
  module "dev_gwlbe" {
   source                   = "./welldyne-gwlbe"
   prov_region              = "home_region"
-  vpc_id                   = module.dev_vpc.vpc_id
+  vpc_id                   = module.dev_vpc.vpc_id[0]
   gwlb_service_name        = module.qa_gwlb.gwlb_endpoint_service_name[0]
   gwlbe_subnet_ids         = module.dev_subnet.subnet_id
   prov_tags                = {
@@ -162,27 +199,28 @@ module "qa_gwlb" {
   providers = {
     aws = aws.home
   }
- }
+}
 
- module "qa_gwlbe" {
-  source                   = "./welldyne-gwlbe"
-  prov_region              = "home_region"
-  vpc_id                   = module.qa_vpc.vpc_id
-  gwlb_service_name        = module.dev_gwlb.gwlb_endpoint_service_name[0]
-  gwlbe_subnet_ids         = module.qa_subnet.subnet_id
-  prov_tags                = {
-    "environemt"  =  "qa"
-    "name"        =  "welldyne-gwlbe-qa"
+
+module "qa_gwlbe" {
+  source            = "./welldyne-gwlbe"
+  prov_region       = "home_region"
+  vpc_id            = module.qa_vpc.vpc_id[0]
+  gwlb_service_name = module.dev_gwlb.gwlb_endpoint_service_name[0]
+  gwlbe_subnet_ids  = module.qa_subnet.subnet_id
+  prov_tags = {
+    "environemt" = "qa"
+    "name"       = "welldyne-gwlbe-qa"
   }
   providers = {
     aws = aws.home
   }
- }
+}
 
 module "dev_gwlb" {
   source      = "./welldyne-gwlb"
   prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id
+  vpc_id      = module.dev_vpc.vpc_id[0]
   gwlb_count = 1
   gwlbs = [
     {
@@ -216,7 +254,7 @@ module "dev_gwlb" {
 module "qa_gwlb" {
   source      = "./welldyne-gwlb"
   prov_region = "home_region"
-  vpc_id      = module.qa_vpc.vpc_id
+  vpc_id      = module.qa_vpc.vpc_id[0]
   gwlb_count = 1
   gwlbs = [
     {
@@ -270,7 +308,7 @@ module "dev_route_table" {
 module "qa_route_table" {
   source      = "./welldyne-routetable"
   prov_region = "home_region"
-  vpc_id      = module.qa_vpc.vpc_id
+  vpc_id      = module.qa_vpc.vpc_id[0]
   subnet_ids  = module.qa_subnet.subnet_id
   routes = {
     to_gwlbe = {
@@ -291,7 +329,7 @@ module "uat_subnet" {
   source           = "./welldyne-subnet"
   prov_subnet_type = "private"
   prov_region      = "home_region"
-  vpc_id           = module.qa_vpc.vpc_id
+  vpc_id           = module.qa_vpc.vpc_id[0]
   cidr_block       = "10.0.1.0/24"
   prov_tags = {
     "environment" = "qa"
@@ -302,7 +340,7 @@ module "uat_subnet" {
     aws = aws.home
   }
   subnet_count    = 3
-  vpc_cidr_block  = module.qa_vpc.vpc_cidr_block
+  vpc_cidr_block  = module.qa_vpc.vpc_cidr_block[0]
   subnet_newbits  = 10
   same_az_subnets = true
   cidr_blocks     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
@@ -336,10 +374,11 @@ module "scp_apply" {
   }
 }
 
+
 module "welldyne-dev-nlb" {
   source      = "./welldyne-nlb"
   prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id
+  vpc_id      = module.dev_vpc.vpc_id[0]
   nlb_count   = 1
   nlbs = [
     {
@@ -395,4 +434,7 @@ module "welldyne-dev-nlb" {
     aws = aws.home
   }
 
+
 }
+
+
