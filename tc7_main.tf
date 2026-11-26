@@ -186,32 +186,65 @@ module "qa_gwlb" {
 
 
 
- module "dev_gwlbe" {
-  source                   = "./welldyne-gwlbe"
-  prov_region              = "home_region"
-  vpc_id                   = module.dev_vpc.vpc_id[0]
-  gwlb_service_name        = module.qa_gwlb.gwlb_endpoint_service_name[0]
-  gwlbe_subnet_ids         = module.dev_subnet.subnet_id
-  prov_tags                = {
-    "environemt"  =  "dev"
-    "name"        =  "welldyne-gwlbe-dev"
+module "dev_gwlbe" {
+  source      = "./welldyne-gwlbe"
+  prov_region = "home_region"
+  vpc_id      = module.dev_vpc.vpc_id[0]
+
+  # Full list output from the GWLB module (not [0])
+  gwlb_endpoint_service_name = module.dev_gwlb.gwlb_endpoint_service_name
+
+  # One GWLBE per dev subnet, all attached to GWLB index 0
+  gwlbe_count = 2
+  gwlbes = [
+    {
+      name       = "welldyne-gwlbe-dev-1"
+      gwlb_index = 0
+      subnet_id  = module.dev_subnet.subnet_id[0]
+    },
+    {
+      name       = "welldyne-gwlbe-dev-2"
+      gwlb_index = 0
+      subnet_id  = module.dev_subnet.subnet_id[1]
+    }
+  ]
+
+  prov_tags = {
+    "environment" = "dev"
+    "name"        = "welldyne-gwlbe-dev"
   }
+
   providers = {
     aws = aws.home
   }
 }
 
-
 module "qa_gwlbe" {
-  source            = "./welldyne-gwlbe"
-  prov_region       = "home_region"
-  vpc_id            = module.qa_vpc.vpc_id[0]
-  gwlb_service_name = module.dev_gwlb.gwlb_endpoint_service_name[0]
-  gwlbe_subnet_ids  = module.qa_subnet.subnet_id
+  source      = "./welldyne-gwlbe"
+  prov_region = "home_region"
+  vpc_id      = module.qa_vpc.vpc_id[0]
+
+  gwlb_endpoint_service_name = module.qa_gwlb.gwlb_endpoint_service_name
+
+  gwlbe_count = 2
+  gwlbes = [
+    {
+      name       = "welldyne-gwlbe-qa-1"
+      gwlb_index = 0
+      subnet_id  = module.qa_subnet.subnet_id[0]
+    },
+    {
+      name       = "welldyne-gwlbe-qa-2"
+      gwlb_index = 0
+      subnet_id  = module.qa_subnet.subnet_id[1]
+    }
+  ]
+
   prov_tags = {
-    "environemt" = "qa"
-    "name"       = "welldyne-gwlbe-qa"
+    "environment" = "qa"
+    "name"        = "welldyne-gwlbe-qa"
   }
+
   providers = {
     aws = aws.home
   }
