@@ -326,7 +326,7 @@ module "dev_route_table" {
   routes = {
     to_gwlbe = {
       destination_cidr_block = "0.0.0.0/0"
-      vpc_endpoint_id        = module.dev_gwlbe.gwlbe_id
+      vpc_endpoint_id        = module.dev_gwlbe.gwlbe_id[0]
     }
   }
   prov_tags = {
@@ -346,7 +346,7 @@ module "qa_route_table" {
   routes = {
     to_gwlbe = {
       destination_cidr_block = "0.0.0.0/0"
-      vpc_endpoint_id        = module.qa_gwlbe.gwlbe_id
+      vpc_endpoint_id        = module.qa_gwlbe.gwlbe_id[0]
     }
   }
   prov_tags = {
