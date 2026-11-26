@@ -27,6 +27,7 @@ variable "prov_tags" {
   type        = map(string)
 }
 
+/*
 variable "subnet_ids" {
   description = "Subnet IDs to associate with this route table."
   type        = list(string)
@@ -42,4 +43,19 @@ variable "routes" {
     transit_gateway_id     = optional(string)
   }))
   default = {}
+}
+*/
+
+variable "route_tables" {
+  description = "Map of route tables"
+  type = map(object({
+    subnet_ids = list(string)
+    routes = map(object({
+      destination_cidr_block = string
+      gateway_id = optional(string)
+      nat_gateway_id = optional(string)
+      transit_gateway_id = optional(string)
+      vpc_endpoint_id = optional(string)
+    }))
+  }))
 }
