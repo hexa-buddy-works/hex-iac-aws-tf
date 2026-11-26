@@ -6,7 +6,7 @@ variable "wd_region" {
   }
   description = "Map of home and DR regions."
 }
- 
+
 variable "prov_region" {
   type        = string
   default     = "home_region"
@@ -16,22 +16,22 @@ variable "prov_region" {
     error_message = "prov_region must be home_region or dr_region."
   }
 }
- 
+
 variable "vpc_id" {
   description = "ID of the VPC the route table belongs to."
   type        = string
 }
- 
+
 variable "prov_tags" {
   description = "A map of tags to assign to the route table."
   type        = map(string)
 }
- 
+
 variable "subnet_ids" {
   description = "Subnet IDs to associate with this route table."
   type        = list(string)
 }
- 
+
 variable "routes" {
   description = "Map of routes. The key is any label you like. Set only ONE target per route."
   type = map(object({

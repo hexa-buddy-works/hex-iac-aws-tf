@@ -1,16 +1,16 @@
-variable "wd_region"{
-  type              = map(string)
-  default           = {
-    home_region     = "us-east-1"
-    dr_region       = "us-west-2"
+variable "wd_region" {
+  type = map(string)
+  default = {
+    home_region = "us-east-1"
+    dr_region   = "us-west-2"
   }
-  description       = "Map of home and DR regions for the VPC."
+  description = "Map of home and DR regions for the VPC."
 }
 
-variable prov_region {
-  type              = string
-  default           = "home_region"
-  description       = "Provisioning region."
+variable "prov_region" {
+  type        = string
+  default     = "home_region"
+  description = "Provisioning region."
 }
 
 locals {
