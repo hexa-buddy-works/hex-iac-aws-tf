@@ -247,18 +247,57 @@ module "qa_gwlb" {
 module "dev_route_table" {
   source      = "./welldyne-routetable"
   prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id[0]
-  subnet_ids  = module.dev_subnet.subnet_id
-  routes = {
-    to_gwlbe = {
-      destination_cidr_block = "0.0.0.0/0"
-      vpc_endpoint_id        = module.dev_gwlbe.gwlbe_id[0]
+  vpc_id = module.dev_vpc.vpc_id[0]
+  route_tables = {
+    private_rt_1 = {
+      subnet_ids = [
+        module.dev_subnet.subnet_id[0]
+      ]
+      routes = {
+        default = {
+          destination_cidr_block = "0.0.0.0/0"
+          vpc_endpoint_id = module.dev_gwlbe.gwlbe_id[0]
+        }
+      }
+    }
+    private_rt_2 = {
+      subnet_ids = [
+        module.dev_subnet.subnet_id[1]
+      ]
+      routes = {
+        default = {
+          destination_cidr_block = "0.0.0.0/0"
+          vpc_endpoint_id = module.dev_gwlbe.gwlbe_id[0]
+        }
+        internal = {
+          destination_cidr_block = "10.100.0.0/16"
+          transit_gateway_id = "tgw-xxxxxxxx"
+        }
+      }
+    }
+
+    inspection_rt = {
+      subnet_ids = [
+        module.uat_subnet.subnet_id[0]
+      ]
+      routes = {
+        internet = {
+          destination_cidr_block = "0.0.0.0/0"
+          gateway_id = "igw-xxxxxxxx"
+        }
+        spoke = {
+          destination_cidr_block = "172.16.0.0/12"
+          transit_gateway_id = "tgw-yyyyyyyy"
+        }
+      }
     }
   }
+
   prov_tags = {
-    "environmet" = "dev"
-    "name"       = "welldyne-rt-dev"
+    environment = "dev"
+    project = "welldyne"
   }
+
   providers = {
     aws = aws.home
   }
@@ -267,18 +306,38 @@ module "dev_route_table" {
 module "qa_route_table" {
   source      = "./welldyne-routetable"
   prov_region = "home_region"
-  vpc_id      = module.qa_vpc.vpc_id[0]
-  subnet_ids  = module.qa_subnet.subnet_id
-  routes = {
-    to_gwlbe = {
-      destination_cidr_block = "0.0.0.0/0"
-      vpc_endpoint_id        = module.qa_gwlbe.gwlbe_id[0]
+  vpc_id = module.qa_vpc.vpc_id[0]
+  route_tables = {
+    qa_private_rt_1 = {
+      subnet_ids = [
+        module.qa_subnet.subnet_id[0]
+      ]
+      routes = {
+        to_gwlbe = {
+          destination_cidr_block = "0.0.0.0/0"
+          vpc_endpoint_id = module.qa_gwlbe.gwlbe_id[0]
+        }
+      }
+    }
+
+    qa_private_rt_2 = {
+      subnet_ids = [
+        module.qa_subnet.subnet_id[1]
+      ]
+      routes = {
+        to_gwlbe = {
+          destination_cidr_block = "0.0.0.0/0"
+          vpc_endpoint_id = module.qa_gwlbe.gwlbe_id[0]
+        }
+      }
     }
   }
+
   prov_tags = {
-    "environmet" = "qa"
-    "name"       = "welldyne-rt-qa"
+    environment = "qa"
+    application = "welldyne"
   }
+
   providers = {
     aws = aws.home
   }
