@@ -1,41 +1,6 @@
-<<<<<<< HEAD
-variable "nlb_count" {
-  description = "Number of NLBs to create."
-  type        = number
-  default     = 1
-}
-
-variable "nlb_load_balancer_type" {
-  description = "Type of load balancer: application or network."
-  type        = string
-  default     = "network"
-  validation {
-    condition     = contains(["application", "network"], var.nlb_load_balancer_type)
-    error_message = "nlb_load_balancer_type must be application or network."
-  }
-}
-
-variable "nlbs" {
-  description = "List of names for the NLBs."
-  type = list(object({
-    name         = string
-    nlb_internal = bool
-    subnet_mappings = list(object({
-      subnet_id            = string
-      allocation_id        = optional(string)
-      private_ipv4_address = optional(string)
-    }))
-  }))
-}
-
-variable "vpc_id" {
-  description = "ID of the VPC (from: terraform output vpc_id in welldyne-vpc)."
-  type        = string
-=======
 locals {
   nlb_load_balancer_type     = "network"
   enable_deletion_protection = true
->>>>>>> aac26301a6b669d938b96eab751023d82447d929
 }
 
 variable "wd_region" {

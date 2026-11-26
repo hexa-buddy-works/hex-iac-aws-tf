@@ -7,21 +7,6 @@ resource "aws_lb" "wd_nlb" {
   internal                         = each.value.nlb_internal
   ip_address_type                  = var.nlb_ip_address_type
   enable_cross_zone_load_balancing = var.nlb_enable_cross_zone_load_balancing
-<<<<<<< HEAD
-  enable_deletion_protection       = var.enable_deletion_protection
-  tags = merge(var.prov_tags,
-    {
-      name = "${var.prov_tags["name"]}-nlb"
-    }
-  )
-
-  dynamic "subnet_mapping" {
-    for_each = var.nlbs[count.index].subnet_mappings
-    content {
-      subnet_id            = subnet_mapping.value.subnet_id                                                                       # The subnet to be attached
-      allocation_id        = subnet_mapping.value.allocation_id == null ? null : subnet_mapping.value.allocation_id               # Public IP allocation ID for the subnet (if applicable)
-      private_ipv4_address = subnet_mapping.value.private_ipv4_address == null ? null : subnet_mapping.value.private_ipv4_address # Private IPv4 address for the subnet (if applicable)
-=======
   enable_deletion_protection       = local.enable_deletion_protection
   tags                             = merge(var.prov_tags,
       {
@@ -35,23 +20,11 @@ resource "aws_lb" "wd_nlb" {
       subnet_id             = subnet_mapping.value.subnet_id    # The subnet to be attached
       allocation_id         = try(subnet_mapping.value.allocation_id, null)  # Public IP allocation ID for the subnet (if applicable)
       private_ipv4_address  = try(subnet_mapping.value.private_ipv4_address, null)   # Private IPv4 address for the subnet (if applicable)
->>>>>>> aac26301a6b669d938b96eab751023d82447d929
     }
   }
 }
 
 resource "aws_lb_target_group" "wd_nlb_tg" {
-<<<<<<< HEAD
-  count       = length(var.nlb_target_groups)
-  name        = var.nlb_target_groups[count.index].name
-  vpc_id      = var.vpc_id
-  port        = var.nlb_target_groups[count.index].port
-  protocol    = var.nlb_target_groups[count.index].protocol
-  target_type = var.nlb_target_groups[count.index].target_type
-
-  health_check {
-    protocol = var.nlb_target_groups[count.index].protocol
-=======
   for_each = {
     for tg in var.nlb_target_groups : tg.name => tg
   }
@@ -64,16 +37,11 @@ resource "aws_lb_target_group" "wd_nlb_tg" {
   health_check {
     protocol                          = each.value.health_check_protocol
     port                              = each.value.health_check_port
->>>>>>> aac26301a6b669d938b96eab751023d82447d929
   }
   tags = merge(
     var.prov_tags,
     {
-<<<<<<< HEAD
-      Name = var.nlb_target_groups[count.index].name
-=======
       Name                            = "${each.value.name}-tg"
->>>>>>> aac26301a6b669d938b96eab751023d82447d929
     }
   )
 }
