@@ -7,49 +7,24 @@ resource "aws_lb" "wd_nlb" {
   internal                         = each.value.nlb_internal
   ip_address_type                  = var.nlb_ip_address_type
   enable_cross_zone_load_balancing = var.nlb_enable_cross_zone_load_balancing
-  enable_deletion_protection       = var.enable_deletion_protection
-  tags = merge(var.prov_tags,
-    {
-      name = "${var.prov_tags["name"]}-nlb"
-    }
-  )
-
-  dynamic "subnet_mapping" {
-    for_each = var.nlbs[count.index].subnet_mappings
-    content {
-      subnet_id            = subnet_mapping.value.subnet_id                                                                       # The subnet to be attached
-      allocation_id        = subnet_mapping.value.allocation_id == null ? null : subnet_mapping.value.allocation_id               # Public IP allocation ID for the subnet (if applicable)
-      private_ipv4_address = subnet_mapping.value.private_ipv4_address == null ? null : subnet_mapping.value.private_ipv4_address # Private IPv4 address for the subnet (if applicable)
-=======
   enable_deletion_protection       = local.enable_deletion_protection
   tags                             = merge(var.prov_tags,
       {
         name                       = "${var.prov_tags["name"]}-nlb"
       }
   )
-
+ 
   dynamic "subnet_mapping" {
     for_each                = each.value.subnet_mappings
     content {
       subnet_id             = subnet_mapping.value.subnet_id    # The subnet to be attached
       allocation_id         = try(subnet_mapping.value.allocation_id, null)  # Public IP allocation ID for the subnet (if applicable)
       private_ipv4_address  = try(subnet_mapping.value.private_ipv4_address, null)   # Private IPv4 address for the subnet (if applicable)
-
     }
   }
 }
-
+ 
 resource "aws_lb_target_group" "wd_nlb_tg" {
-
-  count       = length(var.nlb_target_groups)
-  name        = var.nlb_target_groups[count.index].name
-  vpc_id      = var.vpc_id
-  port        = var.nlb_target_groups[count.index].port
-  protocol    = var.nlb_target_groups[count.index].protocol
-  target_type = var.nlb_target_groups[count.index].target_type
-
-  health_check {
-    protocol = var.nlb_target_groups[count.index].protocol
   for_each = {
     for tg in var.nlb_target_groups : tg.name => tg
   }
@@ -58,7 +33,7 @@ resource "aws_lb_target_group" "wd_nlb_tg" {
   port                                = each.value.port
   protocol                            = each.value.protocol
   target_type                         = each.value.target_type
-
+ 
   health_check {
     protocol                          = each.value.health_check_protocol
     port                              = each.value.health_check_port
@@ -70,8 +45,8 @@ resource "aws_lb_target_group" "wd_nlb_tg" {
     }
   )
 }
-
-
+ 
+ 
 resource "aws_lb_listener" "wd_nlb_listener" {
   for_each         = {
     for listener in var.nlb_listeners : listener.name => listener
@@ -80,7 +55,7 @@ resource "aws_lb_listener" "wd_nlb_listener" {
   load_balancer_arn = local.nlb_arns[each.value.nlb_name]
   port              = each.value.port
   protocol          = each.value.protocol
-
+ 
   default_action {
     type             = "forward"
     forward {
@@ -94,7 +69,7 @@ resource "aws_lb_listener" "wd_nlb_listener" {
       }
     }
   }
-
+ 
   tags                                = merge(
     var.prov_tags,
     {
@@ -102,7 +77,7 @@ resource "aws_lb_listener" "wd_nlb_listener" {
     }
   )
 }
-
+ 
 resource "aws_lb_target_group_attachment" "wd_nlb_tg_attachment" {
   for_each         = {
     for attachment in var.nlb_target_group_attachments : "${attachment.target_group_name}-${attachment.target_id}" => attachment
@@ -111,3 +86,4 @@ resource "aws_lb_target_group_attachment" "wd_nlb_tg_attachment" {
   target_id        = each.value.target_id
   port             = each.value.target_port
 }
+ 

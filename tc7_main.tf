@@ -288,7 +288,7 @@ module "qa_gwlb" {
 module "dev_route_table" {
   source      = "./welldyne-routetable"
   prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id
+  vpc_id      = module.dev_vpc.vpc_id[0]
   subnet_ids  = module.dev_subnet.subnet_id
   routes = {
     to_gwlbe = {
@@ -373,68 +373,4 @@ module "scp_apply" {
     aws = aws.home
   }
 }
-
-
-module "welldyne-dev-nlb" {
-  source      = "./welldyne-nlb"
-  prov_region = "home_region"
-  vpc_id      = module.dev_vpc.vpc_id[0]
-  nlb_count   = 1
-  nlbs = [
-    {
-      name         = "welldyne-nlb-dev"
-      nlb_internal = true
-      subnet_mappings = [
-        {
-          subnet_id            = module.dev_subnet.subnet_id[0]
-          private_ipv4_address = "10.0.1.10"
-        },
-        {
-          subnet_id            = module.dev_subnet.subnet_id[1]
-          private_ipv4_address = "10.0.2.10"
-        }
-      ]
-    }
-  ]
-  nlb_target_groups = [
-    {
-      name        = "welldyne-nlb-tg-web-1"
-      port        = 80
-      protocol    = "TCP"
-      target_type = "ip"
-      weight      = 50
-    },
-    {
-      name        = "welldyne-nlb-tg-web-2"
-      port        = 80
-      protocol    = "TCP"
-      target_type = "ip"
-      weight      = 50
-    },
-    {
-      name        = "welldyne-nlb-tg-TLS-1"
-      port        = 443
-      protocol    = "TCP"
-      target_type = "ip"
-      weight      = 50
-    },
-    {
-      name        = "welldyne-nlb-tg-TLS-2"
-      port        = 443
-      protocol    = "TCP"
-      target_type = "ip"
-      weight      = 50
-    }
-  ]
-  prov_tags = {
-    "environment" = "dev"
-    "name"        = "welldyne-nlb-dev"
-  }
-  providers = {
-    aws = aws.home
-  }
-
-
-}
-
 
