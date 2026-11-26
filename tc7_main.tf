@@ -259,6 +259,7 @@ module "scp_apply" {
   }
 }
 
+<<<<<<< HEAD
 module "welldyne-dev-nlb" {
   source      = "./welldyne-nlb"
   prov_region = "home_region"
@@ -319,3 +320,5 @@ module "welldyne-dev-nlb" {
   }
 
 }
+=======
+>>>>>>> aac26301a6b669d938b96eab751023d82447d929

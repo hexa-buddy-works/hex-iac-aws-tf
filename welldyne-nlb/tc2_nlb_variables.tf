@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 variable "nlb_count" {
   description = "Number of NLBs to create."
   type        = number
@@ -30,6 +31,11 @@ variable "nlbs" {
 variable "vpc_id" {
   description = "ID of the VPC (from: terraform output vpc_id in welldyne-vpc)."
   type        = string
+=======
+locals {
+  nlb_load_balancer_type     = "network"
+  enable_deletion_protection = true
+>>>>>>> aac26301a6b669d938b96eab751023d82447d929
 }
 
 variable "wd_region" {
@@ -51,6 +57,34 @@ variable "prov_region" {
   }
 }
 
+variable "prov_tags" {
+  description = "A map of tags to assign to the resources. Must include a name key."
+  type        = map(string)
+}
+
+variable "nlb_count" {
+  description = "Number of NLBs to create."
+  type        = number
+}
+
+variable "vpc_id" {
+  description = "ID of the VPC."
+  type        = string
+}
+
+variable "nlbs" {
+  description = "List of names for the NLBs."
+  type        = list(object({
+    name = string
+    nlb_internal = bool
+    subnet_mappings = list(object({
+      subnet_id = string
+      allocation_id = optional(string)
+      private_ipv4_address = optional(string)
+    }))
+  }))
+}
+
 variable "nlb_ip_address_type" {
   description = "IP address type of the NLB: ipv4 or dualstack."
   type        = string
@@ -67,24 +101,52 @@ variable "nlb_enable_cross_zone_load_balancing" {
   default     = true
 }
 
-variable "enable_deletion_protection" {
-  description = "Whether deletion protection is enabled on the load balancer."
-  type        = bool
-  default     = false
-}
-
-variable "prov_tags" {
-  description = "A map of tags to assign to the resources. Must include a name key."
-  type        = map(string)
-}
-
 variable "nlb_target_groups" {
   description = "List of target groups for NLB"
   type = list(object({
-    name        = string
-    weight      = number
-    target_type = string
-    protocol    = string
-    port        = number
+    name                  = string
+    weight                = number
+    target_type           = string
+    protocol              = string
+    port                  = number
+    health_check_protocol = string
+    health_check_port     = number
   }))
+}
+
+variable "nlb_listeners" {
+  description = "List of listeners for NLB"
+  type = list(object({
+    name              = string
+    nlb_name          = string
+    port              = number
+    protocol          = string
+    target_group_names = list(string)
+  }))
+}
+
+variable "nlb_target_group_attachments" {
+  description = "List of target group attachments for NLB"
+  type = list(object({
+    target_group_name = string
+    target_id         = string
+    target_port       = number
+  }))
+}
+
+locals {
+
+  target_group_arns = {
+    for name, tg in aws_lb_target_group.wd_nlb_tg :
+    name => tg.arn
+  }
+
+  target_groups_weight = {
+    for tg in var.nlb_target_groups :
+    tg.name => tg.weight
+  }
+
+  nlb_arns = {
+    for name, nlb in aws_lb.wd_nlb : name => nlb.arn
+  }
 }
