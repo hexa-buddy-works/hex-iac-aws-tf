@@ -191,11 +191,10 @@ module "dev_gwlbe" {
   prov_region = "home_region"
   vpc_id      = module.dev_vpc.vpc_id[0]
 
-  # Full list output from the GWLB module (not [0])
   gwlb_endpoint_service_name = module.dev_gwlb.gwlb_endpoint_service_name
 
-  # One GWLBE per dev subnet, all attached to GWLB index 0
   gwlbe_count = 2
+
   gwlbes = [
     {
       name       = "welldyne-gwlbe-dev-1"
@@ -210,8 +209,9 @@ module "dev_gwlbe" {
   ]
 
   prov_tags = {
-    "environment" = "dev"
-    "name"        = "welldyne-gwlbe-dev"
+    environment = "dev"
+    application = "welldyne"
+    managed_by  = "terraform"
   }
 
   providers = {
@@ -227,6 +227,7 @@ module "qa_gwlbe" {
   gwlb_endpoint_service_name = module.qa_gwlb.gwlb_endpoint_service_name
 
   gwlbe_count = 2
+
   gwlbes = [
     {
       name       = "welldyne-gwlbe-qa-1"
@@ -241,8 +242,9 @@ module "qa_gwlbe" {
   ]
 
   prov_tags = {
-    "environment" = "qa"
-    "name"        = "welldyne-gwlbe-qa"
+    environment = "qa"
+    application = "welldyne"
+    managed_by  = "terraform"
   }
 
   providers = {
