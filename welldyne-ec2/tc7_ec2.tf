@@ -87,3 +87,27 @@ resource "aws_instance" "example" {
 
   tags = var.tags
 }
+
+/*
+resource "aws_instance" "wd_ec2" {
+  count = var.ec2_count
+
+  ami                         = var.ec2_instances[count.index].ami_id
+  instance_type               = var.ec2_instances[count.index].instance_type
+  subnet_id                   = var.ec2_instances[count.index].subnet_id
+  private_ip                  = try(var.ec2_instances[count.index].private_ip, null)
+  associate_public_ip_address = try(var.ec2_instances[count.index].associate_public_ip, false)
+
+  vpc_security_group_ids = var.ec2_instances[count.index].security_group_ids
+
+  key_name = try(var.ec2_instances[count.index].key_name, null)
+
+  tags = merge(
+    var.prov_tags,
+    {
+      Name = var.ec2_instances[count.index].name
+    }
+  )
+}
+
+*/
