@@ -16,12 +16,12 @@ variable "nlb_load_balancer_type" {
 
 variable "nlbs" {
   description = "List of names for the NLBs."
-  type        = list(object({
-    name = string
+  type = list(object({
+    name         = string
     nlb_internal = bool
     subnet_mappings = list(object({
-      subnet_id = string
-      allocation_id = optional(string)
+      subnet_id            = string
+      allocation_id        = optional(string)
       private_ipv4_address = optional(string)
     }))
   }))

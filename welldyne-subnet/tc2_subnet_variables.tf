@@ -20,7 +20,7 @@ variable "prov_region" {
 variable "subnet_type" {
   description = "This is a map of the subnet types."
   type        = map(string)
-  default     = {
+  default = {
     public  = true
     private = false
   }
@@ -63,13 +63,13 @@ variable "enable_dns64" {
   default     = false
 }
 
-variable subnet_count {
+variable "subnet_count" {
   description = "Number of subnets to create."
   type        = number
   default     = 1
 }
 
-variable vpc_cidr_block {
+variable "vpc_cidr_block" {
   description = "The CIDR block for the VPC."
   type        = string
 }
@@ -116,5 +116,5 @@ variable "cidr_blocks" {
   description = "List of CIDR blocks for the subnets."
   type        = list(string)
   default     = null
-  
+
 }

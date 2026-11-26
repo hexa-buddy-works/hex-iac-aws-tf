@@ -7,37 +7,37 @@ resource "aws_lb" "wd_nlb" {
   ip_address_type                  = var.nlb_ip_address_type
   enable_cross_zone_load_balancing = var.nlb_enable_cross_zone_load_balancing
   enable_deletion_protection       = var.enable_deletion_protection
-  tags                             = merge(var.prov_tags,
-      {
-        name                       = "${var.prov_tags["name"]}-nlb"
-      }
+  tags = merge(var.prov_tags,
+    {
+      name = "${var.prov_tags["name"]}-nlb"
+    }
   )
 
   dynamic "subnet_mapping" {
-    for_each                = var.nlbs[count.index].subnet_mappings
+    for_each = var.nlbs[count.index].subnet_mappings
     content {
-      subnet_id             = subnet_mapping.value.subnet_id    # The subnet to be attached
-      allocation_id         = subnet_mapping.value.allocation_id == null ? null : subnet_mapping.value.allocation_id   # Public IP allocation ID for the subnet (if applicable)
-      private_ipv4_address  = subnet_mapping.value.private_ipv4_address == null ? null : subnet_mapping.value.private_ipv4_address   # Private IPv4 address for the subnet (if applicable)
+      subnet_id            = subnet_mapping.value.subnet_id                                                                       # The subnet to be attached
+      allocation_id        = subnet_mapping.value.allocation_id == null ? null : subnet_mapping.value.allocation_id               # Public IP allocation ID for the subnet (if applicable)
+      private_ipv4_address = subnet_mapping.value.private_ipv4_address == null ? null : subnet_mapping.value.private_ipv4_address # Private IPv4 address for the subnet (if applicable)
     }
   }
 }
 
 resource "aws_lb_target_group" "wd_nlb_tg" {
-  count                               = length(var.nlb_target_groups)
-  name                                = var.nlb_target_groups[count.index].name
-  vpc_id                              = var.vpc_id
-  port                                = var.nlb_target_groups[count.index].port
-  protocol                            = var.nlb_target_groups[count.index].protocol
-  target_type                         = var.nlb_target_groups[count.index].target_type
+  count       = length(var.nlb_target_groups)
+  name        = var.nlb_target_groups[count.index].name
+  vpc_id      = var.vpc_id
+  port        = var.nlb_target_groups[count.index].port
+  protocol    = var.nlb_target_groups[count.index].protocol
+  target_type = var.nlb_target_groups[count.index].target_type
 
   health_check {
-    protocol                          = var.nlb_target_groups[count.index].protocol
+    protocol = var.nlb_target_groups[count.index].protocol
   }
-  tags                                = merge(
+  tags = merge(
     var.prov_tags,
     {
-      Name                            = var.nlb_target_groups[count.index].name
+      Name = var.nlb_target_groups[count.index].name
     }
   )
 }

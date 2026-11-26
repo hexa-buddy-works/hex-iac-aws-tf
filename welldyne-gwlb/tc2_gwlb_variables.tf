@@ -1,3 +1,20 @@
+variable "gwlb_count" {
+  description = "Number of GWLBs to create."
+  type        = number
+  default     = 1
+}
+
+variable "gwlbs" {
+  description = "List of GWLBs."
+  type = list(object({
+    name = string
+
+    subnet_mappings = list(object({
+      subnet_id = string
+    }))
+  }))
+}
+
 variable "wd_region" {
   type = map(string)
   default = {
@@ -33,6 +50,8 @@ variable "enable_deletion_protection" {
   default     = false
 }
 
+
+/*
 variable "gwlb_name" {
   description = "Name of the GWLB (letters, numbers and hyphens only, max 29 characters so the target group name fits)."
   type        = string
@@ -43,12 +62,15 @@ variable "gwlb_subnet_ids" {
   type        = list(string)
 }
 
+*/
+
+
 variable "gwlb_enable_cross_zone_load_balancing" {
   description = "Whether the GWLB spreads traffic across appliances in all AZs."
   type        = bool
   default     = false
 }
-
+/*
 variable "gwlb_target_type" {
   description = "Target type for the target group: instance or ip."
   type        = string
@@ -58,6 +80,7 @@ variable "gwlb_target_type" {
     error_message = "gwlb_target_type must be instance or ip."
   }
 }
+*/
 
 variable "gwlb_health_check_port" {
   description = "Port the GWLB uses to health check the appliances."
@@ -69,5 +92,15 @@ variable "gwlb_service_acceptance_required" {
   description = "Whether connection requests to the endpoint service must be manually accepted."
   type        = bool
   default     = false
+}
+
+variable "gwlb_target_groups" {
+  description = "List of target groups for GWLB"
+
+  type = list(object({
+    name              = string
+    target_type       = string
+    health_check_port = number
+  }))
 }
 
