@@ -1,6 +1,6 @@
 module "welldyne-dev-nlb" {
   source      = "./welldyne-nlb"
-  prov_region = "home_region"
+  prov_region = "home"
   prov_tags = {
     name        = "value"
     environment = "env"
@@ -12,6 +12,7 @@ module "welldyne-dev-nlb" {
     {
       name         = "nlb1"
       nlb_internal = true
+      nlb_enable_cross_zone_load_balancing = true
       subnet_mappings = [
         {
           # allocation_id = "value" -----------  Not required for internal NLBs
@@ -27,6 +28,7 @@ module "welldyne-dev-nlb" {
     {
       name         = "nlb2"
       nlb_internal = true
+      nlb_enable_cross_zone_load_balancing = true
       subnet_mappings = [
         {
           # allocation_id = "value" -----------  Not required for internal NLBs

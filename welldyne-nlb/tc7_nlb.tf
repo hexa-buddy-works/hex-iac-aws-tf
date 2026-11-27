@@ -6,7 +6,7 @@ resource "aws_lb" "wd_nlb" {
   load_balancer_type               = local.nlb_load_balancer_type
   internal                         = each.value.nlb_internal
   ip_address_type                  = var.nlb_ip_address_type
-  enable_cross_zone_load_balancing = var.nlb_enable_cross_zone_load_balancing
+  enable_cross_zone_load_balancing = each.value.nlb_enable_cross_zone_load_balancing
   enable_deletion_protection       = local.enable_deletion_protection
   tags                             = merge(var.prov_tags,
       {

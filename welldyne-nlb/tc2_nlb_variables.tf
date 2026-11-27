@@ -6,18 +6,18 @@ locals {
 variable "wd_region" {
   type = map(string)
   default = {
-    home_region = "us-east-1"
-    dr_region   = "us-west-2"
+    home = "us-east-1"
+    dr   = "us-west-2"
   }
   description = "Map of home and DR regions."
 }
 
 variable "prov_region" {
   type        = string
-  default     = "home_region"
+  default     = "home"
   description = "Provisioning region (selector)."
   validation {
-    condition     = contains(["home_region", "dr_region"], var.prov_region)
+    condition     = contains(["home", "dr"], var.prov_region)
     error_message = "prov_region must be home_region or dr_region."
   }
 }
@@ -42,6 +42,7 @@ variable "nlbs" {
   type        = list(object({
     name = string
     nlb_internal = bool
+    nlb_enable_cross_zone_load_balancing = bool
     subnet_mappings = list(object({
       subnet_id = string
       allocation_id = optional(string)
@@ -58,12 +59,6 @@ variable "nlb_ip_address_type" {
     condition     = contains(["ipv4", "dualstack"], var.nlb_ip_address_type)
     error_message = "nlb_ip_address_type must be ipv4 or dualstack."
   }
-}
-
-variable "nlb_enable_cross_zone_load_balancing" {
-  description = "Whether the NLB spreads traffic across targets in all AZs."
-  type        = bool
-  default     = true
 }
 
 variable "nlb_target_groups" {
