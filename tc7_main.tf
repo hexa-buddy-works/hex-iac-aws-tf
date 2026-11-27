@@ -468,3 +468,76 @@ module "scp_apply" {
   }
 }
 
+module "dev_eip" {
+  source = "./welldyne-eip"
+  prov_region = "home_region"
+  eips = {
+    nat_eip_1 = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "nat"
+      }
+    }
+    nat_eip_2 = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "nat"
+      }
+    }
+
+    gwlb_eip = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "gwlb"
+      }
+    }
+  }
+
+  prov_tags = {
+    application = "welldyne"
+  }
+
+  providers = {
+    aws = aws.home
+  }
+}
+
+module "qa_eip" {
+  source = "./welldyne-eip"
+  prov_region = "home_region"
+  eips = {
+    qa_nat_eip_1 = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "nat"
+      }
+    }
+
+    qa_nat_eip_2 = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "nat"
+      }
+    }
+    qa_gwlb_eip = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "gwlb"
+      }
+    }
+  }
+
+  prov_tags = {
+    environment = "qa"
+  }
+
+  providers = {
+    aws = aws.home
+  }
+}
