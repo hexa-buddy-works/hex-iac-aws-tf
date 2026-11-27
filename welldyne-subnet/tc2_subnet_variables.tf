@@ -46,11 +46,6 @@ variable "prov_tags" {
   type        = map(string)
 }
 
-variable "cidr_block" {
-  description = "The CIDR block for the subnet."
-  type        = string
-}
-
 variable "enable_dns64" {
   description = "Whether DNS64 is enabled."
   type        = bool

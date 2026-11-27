@@ -46,9 +46,6 @@ The type of the subnet to be created (Private/Public)
 ### Argument : prov_region (string - home/dr) - provided region
 This is the region where the VPC to be provisioned (home or dr)
 
-### Argument : cidr_block (string)
-The CIDR private ip block for the Subnet.
-
 ### Argument : vpc_id (string)
 The VPC Id where the Subnet to be created
 
@@ -67,12 +64,11 @@ If the Subnet(s) to be created in multiple availability zones, provide the list 
 > [!CAUTION]
 > If the argument 'same_az_subnets' set to false and argument 'availability_zones' is empty, the script selects the AZ randomly but the argument 'subnet_count' and VPC's region's AZ count must be same.
 
-### Argument : vpc_cidr_block (string) - optional
-The CIDR of the VPC where the Subnets to be created. Provide this value if the subnet CIDR to be calculated automatically.
-
-
 ### Argument : cidr_blocks (list) - optional
 The CIDR(s) for the Subnet(s) to be created. The argument 'subnet_count' value and items in this list to be same
+
+### Argument : vpc_cidr_block (string) - optional
+The CIDR of the VPC where the Subnets to be created. Provide this value if the subnet CIDR to be calculated automatically.
 
 ### Argument : subnet_newbits_list (list) - optional
 This list length must be same as the argument 'subnet_count'.  The below is the calculation of CIDR of subnet. 
@@ -81,8 +77,11 @@ This list length must be same as the argument 'subnet_count'.  The below is the 
   SUBNET_COUNT = 2
   SUBNET_NEWBITS_LIST = [12, 10]
   
-  Subnet 1 CIDR = 10.0.0.0/28 (16+12 = 28) in AZ1 - selected randomly
-  Subnet 2 CIDR = 10.0.0.17/26 (16+10 = 26) in AZ2 - selected randomly
+  Subnet 1 CIDR = 10.0.0.0/28 (16+12 = 28)
+  Subnet 2 CIDR = 10.0.0.17/26 (16+10 = 26)
+  
+> [!NOTE]
+> Do not use this option if the VPC has subnets already
 
 > [!CAUTION]
 > Either one of the  arguments 'subnet_newbits_list' or 'cidr_blocks' must have data 
