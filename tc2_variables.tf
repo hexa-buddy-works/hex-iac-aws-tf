@@ -17,13 +17,15 @@ locals {
   tags = {
     cost_center = "cost_center"
     project     = "project_name"
-    change_id   = "var.change_id"
-    region      = var.wd_region["home_region"]
+    change_id   = "change_id"
+    mapid       = "abc-123"
+    owner       = "platform-team"
   }
   dr_tags = {
     cost_center = "cost_center"
     project     = "project_name"
-    change_id   = "var.change_id"
-    region      = var.wd_region["dr_region"]
+    change_id   = "change_id"
+    mapid       = "abc-123"
+    owner       = "platform-team"
   }
 }

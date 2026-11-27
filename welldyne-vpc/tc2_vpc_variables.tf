@@ -1,15 +1,15 @@
 variable "wd_region" {
   type = map(string)
   default = {
-    home_region = "us-east-1"
-    dr_region   = "us-west-2"
+    home = "us-east-1"
+    dr   = "us-west-2"
   }
   description = "Map of home and DR regions."
 }
 
 variable "prov_region" {
   type        = string
-  default     = "home_region"
+  default     = "home"
   description = "Provisioning region."
 }
 
