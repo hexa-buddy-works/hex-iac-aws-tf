@@ -13,50 +13,23 @@ variable "prov_region" {
   description = "Provisioning region."
 }
 
-#variable "cidr_block" {
-#  description = "IPv4 CIDR block assigned to the VPC."
-#  type        = string
-#}
+locals {
+  enable_dns_support         = false
+  enable_dns_hostnames       = false
+  prevent_destroy            = true
+}
 
-variable "instance_tenancy" {
-  description = "Tenancy option for instances launched into the VPC."
-  type        = string
-  default     = "default"
 
-  validation {
-    condition = contains(
-      [
-        "default",
-        "dedicated"
-      ],
-      var.instance_tenancy
+variable "prov_tags" {
+ description = "A map of tags to assign to the resource."
+ type        = map(string)
+ validation {
+    condition = (
+      prov_tags["name"] 
     )
-    error_message = "Instance_tenancy must be default or dedicated."
+    error_message = "Each VPC prov_tags map must contain a name key."
   }
 }
-
-variable "enable_dns_support" {
-  description = "Whether DNS resolution through the Amazon-provided DNS server is enabled."
-  type        = bool
-  default     = false
-}
-
-variable "enable_dns_hostnames" {
-  description = "Whether instances launched in the VPC receive DNS hostnames."
-  type        = bool
-  default     = false
-}
-
-variable "enable_network_address_usage_metrics" {
-  description = "Whether Network Address Usage metrics are enabled for the VPC."
-  type        = bool
-  default     = false
-}
-
-#variable "prov_tags" {
-#  description = "A map of tags to assign to the resource."
-#  type        = map(string)
-#}
 
 variable "vpc_count" {
   description = "Number of VPCs to create."
@@ -65,11 +38,17 @@ variable "vpc_count" {
 
   validation {
     condition = (
-      var.vpc_count > 0 && floor(var.vpc_count) == var.vpc_count
+      var.vpc_count > 0 && var.vpc_count <= 5
     )
 
-    error_message = "vpc_count must be a positive whole number."
+    error_message = "VPC count cannot exceed 5."
   }
+}
+
+variable "" {
+  description = "Prevent destruction of VPC."
+  type        = bool
+  default     = true
 }
 
 variable "vpcs" {
@@ -78,10 +57,7 @@ variable "vpcs" {
   type = list(object({
     cidr_block                           = string
     instance_tenancy                     = optional(string, "default")
-    enable_dns_support                   = optional(bool, false)
-    enable_dns_hostnames                 = optional(bool, false)
     enable_network_address_usage_metrics = optional(bool, false)
-    prov_tags                            = map(string)
   }))
 
   validation {
@@ -96,7 +72,7 @@ variable "vpcs" {
       )
     ])
 
-    error_message = "instance_tenancy must be default or dedicated."
+    error_message = "Instance_tenancy must be default or dedicated."
   }
 
   validation {
@@ -108,12 +84,5 @@ variable "vpcs" {
     error_message = "Each cidr_block must be a valid CIDR block."
   }
 
-  validation {
-    condition = alltrue([
-      for vpc in var.vpcs :
-      can(vpc.prov_tags["name"])
-    ])
-
-    error_message = "Each VPC prov_tags map must contain a name key."
-  }
+  
 }

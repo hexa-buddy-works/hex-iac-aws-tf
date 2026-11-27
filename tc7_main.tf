@@ -2,68 +2,20 @@ module "dev_vpc" {
   source      = "./welldyne-vpc"
   prov_region = "home_region"
   vpc_count   = 2
-
+  prov_tags   = {
+        environment = "dev"
+        name        = "welldyne-vpc-dev-1"
+      }
   vpcs = [
     {
       cidr_block                           = "10.0.0.0/16"
       instance_tenancy                     = "default"
-      enable_dns_support                   = false
-      enable_dns_hostnames                 = false
       enable_network_address_usage_metrics = false
-
-      prov_tags = {
-        environment = "dev"
-        name        = "welldyne-vpc-dev-1"
-      }
     },
     {
       cidr_block                           = "10.1.0.0/16"
       instance_tenancy                     = "default"
-      enable_dns_support                   = false
-      enable_dns_hostnames                 = false
       enable_network_address_usage_metrics = false
-
-      prov_tags = {
-        environment = "dev"
-        name        = "welldyne-vpc-dev-2"
-      }
-    }
-  ]
-
-  providers = {
-    aws = aws.home
-  }
-}
-
-module "qa_vpc" {
-  source      = "./welldyne-vpc"
-  prov_region = "home_region"
-  vpc_count   = 2
-
-  vpcs = [
-    {
-      cidr_block                           = "10.2.0.0/16"
-      instance_tenancy                     = "default"
-      enable_dns_support                   = false
-      enable_dns_hostnames                 = false
-      enable_network_address_usage_metrics = false
-
-      prov_tags = {
-        environment = "qa"
-        name        = "welldyne-vpc-qa-1"
-      }
-    },
-    {
-      cidr_block                           = "10.3.0.0/16"
-      instance_tenancy                     = "default"
-      enable_dns_support                   = false
-      enable_dns_hostnames                 = false
-      enable_network_address_usage_metrics = false
-
-      prov_tags = {
-        environment = "qa"
-        name        = "welldyne-vpc-qa-2"
-      }
     }
   ]
 
