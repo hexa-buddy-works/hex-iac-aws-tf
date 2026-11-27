@@ -13,19 +13,31 @@ terraform {
     region = "us-east-1"
   }
 }
-
+# Default Provider
 provider "aws" {
   region = var.wd_region["home_region"]
+
   default_tags {
     tags = local.tags
   }
-  alias = "home"
 }
 
+# Home Region Provider
 provider "aws" {
-  region = var.wd_region["dr_region"]
+  alias  = "home"
+  region = var.wd_region["home_region"]
+
   default_tags {
     tags = local.tags
   }
-  alias = "dr"
+}
+
+# DR Region Provider
+provider "aws" {
+  alias  = "dr"
+  region = var.wd_region["dr_region"]
+
+  default_tags {
+    tags = local.tags
+  }
 }
