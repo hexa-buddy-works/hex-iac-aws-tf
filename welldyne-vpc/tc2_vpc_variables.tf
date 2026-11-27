@@ -16,7 +16,6 @@ variable "prov_region" {
 locals {
   enable_dns_support         = false
   enable_dns_hostnames       = false
-  prevent_destroy            = true
 }
 
 
@@ -25,7 +24,7 @@ variable "prov_tags" {
  type        = map(string)
  validation {
     condition = (
-      prov_tags["name"] 
+      length(var. prov_tags) > 0 
     )
     error_message = "Each VPC prov_tags map must contain a name key."
   }
@@ -43,12 +42,6 @@ variable "vpc_count" {
 
     error_message = "VPC count cannot exceed 5."
   }
-}
-
-variable "" {
-  description = "Prevent destruction of VPC."
-  type        = bool
-  default     = true
 }
 
 variable "vpcs" {

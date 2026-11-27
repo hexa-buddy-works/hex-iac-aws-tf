@@ -9,7 +9,7 @@ resource "aws_vpc" "wd_vpc" {
   tags                                 = var.prov_tags
 
   lifecycle {
-    prevent_destroy                    = local.prevent_destroy
+    prevent_destroy                    = true
     #Ensure the CIDR block within Class A range
     precondition {
       condition                        = can(regex("^10\\.", var.vpcs[count.index].cidr_block))

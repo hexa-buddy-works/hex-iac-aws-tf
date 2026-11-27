@@ -1,134 +1,134 @@
 module "welldyne-dev-nlb" {
-  source                   = "./welldyne-nlb"
-  prov_region              = "home_region"
-  prov_tags     = {
+  source      = "./welldyne-nlb"
+  prov_region = "home_region"
+  prov_tags = {
     name        = "value"
     environment = "env"
   }
   nlb_count = 2
-  vpc_id = "value"
+  vpc_id    = "value"
 
   nlbs = [
     {
-      name = "nlb1"
+      name         = "nlb1"
       nlb_internal = true
-      subnet_mappings = [ 
-      {
-        # allocation_id = "value" -----------  Not required for internal NLBs
-        private_ipv4_address = "10.0.1.10"
-        subnet_id = "value1"
-      },
-      {
-        private_ipv4_address = "10.0.2.10"
-        subnet_id = "value2"
-      }
+      subnet_mappings = [
+        {
+          # allocation_id = "value" -----------  Not required for internal NLBs
+          private_ipv4_address = "10.0.1.10"
+          subnet_id            = "value1"
+        },
+        {
+          private_ipv4_address = "10.0.2.10"
+          subnet_id            = "value2"
+        }
       ]
     },
     {
-      name = "nlb2"
+      name         = "nlb2"
       nlb_internal = true
-      subnet_mappings = [ 
-      {
-        # allocation_id = "value" -----------  Not required for internal NLBs
-        private_ipv4_address = "10.1.1.10"
-        subnet_id = "value1"
-      },
-      {
-        private_ipv4_address = "10.1.2.10"
-        subnet_id = "value2"
-      }
+      subnet_mappings = [
+        {
+          # allocation_id = "value" -----------  Not required for internal NLBs
+          private_ipv4_address = "10.1.1.10"
+          subnet_id            = "value1"
+        },
+        {
+          private_ipv4_address = "10.1.2.10"
+          subnet_id            = "value2"
+        }
       ]
     }
   ]
 
   nlb_target_groups = [
     {
-      name = "tg1"
-      port = 80
-      protocol = "TCP"
-      target_type = "ip"
+      name                  = "tg1"
+      port                  = 80
+      protocol              = "TCP"
+      target_type           = "ip"
       health_check_protocol = "TCP"
-      health_check_port = "80"
-      weight = 50
-    }, 
-    {
-      name = "tg2"
-      port = 80
-      protocol = "TCP"
-      target_type = "ip"
-      health_check_protocol = "TCP"
-      health_check_port = "80"
-      weight = 50
+      health_check_port     = "80"
+      weight                = 50
     },
     {
-      name = "tg3"
-      port = 8080
-      protocol = "TCP"
-      target_type = "ip"
+      name                  = "tg2"
+      port                  = 80
+      protocol              = "TCP"
+      target_type           = "ip"
       health_check_protocol = "TCP"
-      health_check_port = "8080"
-      weight = 100
+      health_check_port     = "80"
+      weight                = 50
     },
     {
-      name = "tg4"
-      port = 443
-      protocol = "TCP"
-      target_type = "ip"
+      name                  = "tg3"
+      port                  = 8080
+      protocol              = "TCP"
+      target_type           = "ip"
       health_check_protocol = "TCP"
-      health_check_port = "443"
-      weight = 100
+      health_check_port     = "8080"
+      weight                = 100
+    },
+    {
+      name                  = "tg4"
+      port                  = 443
+      protocol              = "TCP"
+      target_type           = "ip"
+      health_check_protocol = "TCP"
+      health_check_port     = "443"
+      weight                = 100
     }
   ]
 
   nlb_listeners = [
     {
-      name = "listener1"
-      nlb_name = "nlb1"
-      port = 80
-      protocol = "TCP"
-      target_group_names = [ "tg1", "tg2" ]
+      name               = "listener1"
+      nlb_name           = "nlb1"
+      port               = 80
+      protocol           = "TCP"
+      target_group_names = ["tg1", "tg2"]
     },
     {
-      name = "listener2"
-      nlb_name = "nlb1"
-      port = 8080
-      protocol = "TCP"
-      target_group_names = [ "tg3" ]
+      name               = "listener2"
+      nlb_name           = "nlb1"
+      port               = 8080
+      protocol           = "TCP"
+      target_group_names = ["tg3"]
     },
     {
-      name = "listener3"
-      nlb_name = "nlb2"
-      port = 443
-      protocol = "TCP"
-      target_group_names = [ "tg4" ]
+      name               = "listener3"
+      nlb_name           = "nlb2"
+      port               = 443
+      protocol           = "TCP"
+      target_group_names = ["tg4"]
     }
   ]
 
   nlb_target_group_attachments = [
     {
       target_group_name = "tg1"
-      target_id = "instance1"
-      target_port = 80
+      target_id         = "instance1"
+      target_port       = 80
     },
     {
       target_group_name = "tg1"
-      target_id = "instance2"
-      target_port = 80
+      target_id         = "instance2"
+      target_port       = 80
     },
     {
       target_group_name = "tg2"
-      target_id = "lambda_arn1"
-      target_port = 8080
+      target_id         = "lambda_arn1"
+      target_port       = 8080
     },
     {
       target_group_name = "tg3"
-      target_id = "ip1"
-      target_port = 8080
+      target_id         = "ip1"
+      target_port       = 8080
     },
     {
       target_group_name = "tg4"
-      target_id = "alb_arn1"
-      target_port = 443
+      target_id         = "alb_arn1"
+      target_port       = 443
     }
   ]
 }
