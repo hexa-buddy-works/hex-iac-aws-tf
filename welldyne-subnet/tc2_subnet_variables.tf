@@ -1,19 +1,19 @@
 variable "wd_region" {
   type = map(string)
   default = {
-    home_region = "us-east-1"
-    dr_region   = "us-west-2"
+    home = "us-east-1"
+    dr   = "us-west-2"
   }
   description = "Map of home and DR regions."
 }
 
 variable "prov_region" {
   type        = string
-  default     = "home_region"
+  default     = "home"
   description = "Provisioning region (selector)."
   validation {
-    condition     = contains(["home_region", "dr_region"], var.prov_region)
-    error_message = "prov_region must be home_region or dr_region."
+    condition     = contains(["home", "dr"], var.prov_region)
+    error_message = "prov_region must be home or dr."
   }
 }
 
@@ -51,12 +51,6 @@ variable "cidr_block" {
   type        = string
 }
 
-variable "availability_zone" {
-  description = "AZ name (e.g. us-east-1a). Use this or availability_zone_id, not both."
-  type        = string
-  default     = "us-east-1a"
-}
-
 variable "enable_dns64" {
   description = "Whether DNS64 is enabled."
   type        = bool
@@ -72,6 +66,7 @@ variable "subnet_count" {
 variable "vpc_cidr_block" {
   description = "The CIDR block for the VPC."
   type        = string
+  default = "10.0.0.0/16"
 }
 
 variable "subnet_newbits" {
@@ -94,16 +89,7 @@ variable "subnet_newbits_list" {
 }
 
 locals {
-  effective_subnet_count = min(
-    var.subnet_count,
-    length(data.aws_availability_zones.available.names)
-  )
-}
-
-variable "availability_zone_ids" {
-  description = "AZ ID (e.g. use1-az1). Use this or availability_zone, not both."
-  type        = list(string)
-  default     = null
+  effective_subnet_count = var.same_az_subnets == false || var.availability_zones == null ? min(var.subnet_count, length(data.aws_availability_zones.available.names)) : var.subnet_count
 }
 
 variable "same_az_subnets" {
@@ -112,9 +98,26 @@ variable "same_az_subnets" {
   default     = false
 }
 
+variable "availability_zone" {
+  description = "Availability zone name."
+  type        = string
+  default     = "us-east-1a"
+}
 variable "cidr_blocks" {
   description = "List of CIDR blocks for the subnets."
   type        = list(string)
   default     = null
 
+}
+
+variable "availability_zones" {
+  description = "List of availability zones."
+  type        = list(string)
+  default     = null
+}
+
+
+locals {
+  azs = var.availability_zones != null ? var.availability_zones : data.aws_availability_zones.available.names
+  azs_status = var.availability_zones == null && var.subnet_count == length(data.aws_availability_zones.available.names)
 }
