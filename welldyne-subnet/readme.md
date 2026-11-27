@@ -37,31 +37,31 @@ module "dev_subnet" {
 
 ## Inputs
 
-### Argument : subnet_count
+### Argument : subnet_count (number)
 Number of VPCs to be created.
 
-### Argument : prov_subnet_type 
+### Argument : prov_subnet_type (string - private/public)
 The type of the subnet to be created (Private/Public)
 
-### Argument : prov_region  - provided region
+### Argument : prov_region (string - home/dr) - provided region
 This is the region where the VPC to be provisioned (home or dr)
 
-### Argument : cidr_block
+### Argument : cidr_block (string)
 The CIDR private ip block for the Subnet.
 
-### Argument : vpc_id
+### Argument : vpc_id (string)
 The VPC Id where the Subnet to be created
 
-### Argument : prov_tags - provided tags
+### Argument : prov_tags (list) - provided tags
 To add custom tags. The calling script must pass default tags. The default tags contain the madatory tags like mapid, costcenter etc,.
 
-### Argument : same_az_subnets - optional
+### Argument : same_az_subnets (bool)- optional
 Set this value to 'true' if you want to create subnets in a same availability zone. If the value is set to true, ensure the argument 'availability_zone' value specified based on the requirement.
 
-### Argument : availability_zone - optional 
+### Argument : availability_zone (string) - optional 
 The availability zone where the Subnet(s) to be created. It defaults to "us-east-1a". Set this argument if the argument 'same_az_subnets' is set to true
 
-### Argument : availability_zones - optional
+### Argument : availability_zones (list) - optional
 If the Subnet(s) to be created in multiple availability zones, provide the list of availability zones. If the argument 'subnet_count' and length of this list not matching , error will be thrown
 
 > [!CAUTION]

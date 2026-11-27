@@ -43,19 +43,19 @@ module "dev_vpc" {
 
 ## Inputs
 
-### Argument : vpc_count 
+### Argument : vpc_count (number)
 Number of VPCs to be created. Value cannot exceed 5
 
-### Argument : prov_region  - provided region
+### Argument : prov_region (string - home/dr) - provided region
 This is the region where the VPC to be provisioned (home or dr)
 
-### Argument : cidr_block
+### Argument : cidr_block (string)
 The CIDR private ip block for the VPC. The VPC CIDR block must reside within the Class A (10.0.0.0/16) private IP range
 
-### Argument : instance_tenancy
+### Argument : instance_tenancy (string - default/dedicated)
 Tenancy of instances to spin up within VPC
 
-### Argument : prov_tags - provided tags
+### Argument : prov_tags (list) - provided tags
 To add custom tags. The calling script must pass default tags. The default tags contain the madatory tags like mapid, costcenter etc,.
 
 ``` hcl
