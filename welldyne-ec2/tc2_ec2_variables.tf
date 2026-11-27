@@ -65,8 +65,6 @@ variable "network_interfaces" {
 
 variable "tags" { type = map(string) }
 
-
-/*
 variable "ec2_count" {
   description = "Number of EC2 instances."
   type        = number
@@ -77,15 +75,13 @@ variable "ec2_instances" {
   description = "List of EC2 instances."
 
   type = list(object({
-    name                  = string
-    ami_id                = string
-    instance_type         = string
-    subnet_id             = string
-    private_ip            = optional(string)
-    associate_public_ip   = optional(bool, false)
-    security_group_ids    = list(string)
-    key_name              = optional(string)
+    name                        = string
+    ami                         = string
+    instance_type               = string
+    subnet_id                   = string
+    private_ip                  = optional(string)
+    associate_public_ip_address = optional(bool, false)
+    vpc_security_group_ids      = list(string)
+    key_name                    = optional(string)
   }))
 }
-
-*/

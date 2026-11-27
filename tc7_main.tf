@@ -396,196 +396,76 @@ module "scp_apply" {
   }
 }
 
-
-
-
-
-/*
-module "dev_ec2" {
-  source = "./welldyne-ec2"
-  ec2_count = 2
-  ec2_instances = [
-    {
-      name               = "dev-app-01"
-      ami_id             = "ami-0abcdef1234567890"
-      instance_type      = "t3.micro"
-      subnet_id          = module.dev_subnet.subnet_id[0]
-      private_ip         = "10.0.1.100"
-      security_group_ids = [module.dev_sg.sg_id]
-      key_name           = "welldyne-key"
-    },
-
-    {
-      name               = "dev-app-02"
-      ami_id             = "ami-0abcdef1234567890"
-      instance_type      = "t3.micro"
-      subnet_id          = module.dev_subnet.subnet_id[1]
-      private_ip         = "10.0.2.100"
-      security_group_ids = [module.dev_sg.sg_id]
-      key_name           = "welldyne-key"
-    }
-  ]
-
-  prov_tags = {
-    environment = "dev"
-    name        = "welldyne-ec2-dev"
-  }
-
-  providers = {
-    aws = aws.home
-  }
-}
-*/
-
-
-/*
-module "dev_gwlb" {
-  source          = "./welldyne-gwlb"
-  prov_region     = "home_region"
-  vpc_id          = module.dev_vpc.vpc_id[0]
-  gwlb_name       = "welldyne-gwlb-dev"
-  gwlb_subnet_ids = module.dev_subnet.subnet_id
-  prov_tags = {
-    "environment" = "dev"
-    "name"        = "welldyne-gwlb-dev"
-  }
-  providers = {
-    aws = aws.home
-  }
-}
-
-module "qa_gwlb" {
-  source          = "./welldyne-gwlb"
-  prov_region     = "home_region"
-  vpc_id          = module.qa_vpc.vpc_id[0]
-  gwlb_name       = "welldyne-gwlb-qa"
-  gwlb_subnet_ids = module.qa_subnet.subnet_id
-  prov_tags = {
-    "environment" = "qa"
-    "name"        = "welldyne-gwlb-qa"
-  }
-
-  providers = {
-    aws = aws.home
-  }
-}
-
-module "qa_gwlb" {
-  source      = "./welldyne-gwlb"
+module "dev_eip" {
+  source = "./welldyne-eip"
   prov_region = "home_region"
-  vpc_id      = module.qa_vpc.vpc_id
-
-  gwlb_count = 1
-
-  gwlbs = [
-    {
-      name = "welldyne-gwlb-qa"
-
-      subnet_mappings = [
-        {
-          subnet_id = module.qa_subnet.subnet_id[0]
-        },
-        {
-          subnet_id = module.qa_subnet.subnet_id[1]
-        }
-      ]
+  eips = {
+    nat_eip_1 = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "nat"
+      }
     }
-  ]
-
-  gwlb_target_groups = [
-    {
-      name              = "welldyne-gwlb-qa-tg"
-      target_type       = "instance"
-      health_check_port = 80
+    nat_eip_2 = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "nat"
+      }
     }
-  ]
+
+    gwlb_eip = {
+      domain = "vpc"
+      tags = {
+        environment = "dev"
+        purpose = "gwlb"
+      }
+    }
+  }
+
+  prov_tags = {
+    application = "welldyne"
+  }
+
+  providers = {
+    aws = aws.home
+  }
+}
+
+module "qa_eip" {
+  source = "./welldyne-eip"
+  prov_region = "home_region"
+  eips = {
+    qa_nat_eip_1 = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "nat"
+      }
+    }
+
+    qa_nat_eip_2 = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "nat"
+      }
+    }
+    qa_gwlb_eip = {
+      domain = "vpc"
+      tags = {
+        environment = "qa"
+        purpose     = "gwlb"
+      }
+    }
+  }
 
   prov_tags = {
     environment = "qa"
-    name        = "welldyne-gwlb-qa"
   }
 
   providers = {
     aws = aws.home
   }
 }
-*/
-
-
-
-
-
-/*
-module "dev_gwlb" {
-  source          = "./welldyne-gwlb"
-  prov_region     = "home_region"
-  vpc_id          = module.dev_vpc.vpc_id[0]
-  gwlb_name       = "welldyne-gwlb-dev"
-  gwlb_subnet_ids = module.dev_subnet.subnet_id
-  prov_tags = {
-    "environment" = "dev"
-    "name"        = "welldyne-gwlb-dev"
-  }
-  providers = {
-    aws = aws.home
-  }
-}
-
-module "qa_gwlb" {
-  source          = "./welldyne-gwlb"
-  prov_region     = "home_region"
-  vpc_id          = module.qa_vpc.vpc_id[0]
-  gwlb_name       = "welldyne-gwlb-qa"
-  gwlb_subnet_ids = module.qa_subnet.subnet_id
-  prov_tags = {
-    "environment" = "qa"
-    "name"        = "welldyne-gwlb-qa"
-  }
-
-  providers = {
-    aws = aws.home
-  }
-}
-
-module "qa_gwlb" {
-  source      = "./welldyne-gwlb"
-  prov_region = "home_region"
-  vpc_id      = module.qa_vpc.vpc_id
-
-  gwlb_count = 1
-
-  gwlbs = [
-    {
-      name = "welldyne-gwlb-qa"
-
-      subnet_mappings = [
-        {
-          subnet_id = module.qa_subnet.subnet_id[0]
-        },
-        {
-          subnet_id = module.qa_subnet.subnet_id[1]
-        }
-      ]
-    }
-  ]
-
-  gwlb_target_groups = [
-    {
-      name              = "welldyne-gwlb-qa-tg"
-      target_type       = "instance"
-      health_check_port = 80
-    }
-  ]
-
-  prov_tags = {
-    environment = "qa"
-    name        = "welldyne-gwlb-qa"
-  }
-
-  providers = {
-    aws = aws.home
-  }
-}
-*/
-
-
